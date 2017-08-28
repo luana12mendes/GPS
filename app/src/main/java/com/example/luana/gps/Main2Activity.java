@@ -5,11 +5,11 @@ import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,49 +25,48 @@ import java.util.List;
 
 public class Main2Activity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-        private TextView txtLatitude, txtLongitude, txtInfo;
-        private Button btnStart;
-        private EditText etxtLatitude, etxtLongitude, etxtEndereco;
+        private TextView  txtResult;
+        private Button btnOk;
+        private EditText etxtLat, etxtLong;
         private GoogleApiClient mGoogleApiClient;
         private Address endereco;
         private double latitude = 0.0;
         private double longitude = 0.0;
-        private String end = null;
+
 
         String[] permissoes = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2
-        );
+        setContentView(R.layout.activity_main2);
 
-        txtInfo = (TextView) findViewById(R.id.txtInfo);
+        txtResult = (TextView) findViewById(R.id.txtResult);
 
-        etxtLatitude = (EditText) findViewById(R.id.etxtLatitude);
-        etxtLongitude = (EditText) findViewById(R.id.etxtLongitude);
+        etxtLat = (EditText) findViewById(R.id.etxtLat);
+        etxtLong = (EditText) findViewById(R.id.etxtLong);
 
 
         PermissionUtils.validate(this, 0, permissoes);
 
         callConnection();
 
-        btnStart = (Button) findViewById(R.id.btnStart);
-        btnStart.setOnClickListener(new View.OnClickListener() {
+        btnOk = (Button) findViewById(R.id.btnOk);
+        btnOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                if (etxtLatitude.getText().toString().length() != 0){
-                    latitude = Double.parseDouble(etxtLatitude.getText().toString());
+                if (etxtLat.getText().toString().length() != 0){
+                    latitude = Double.parseDouble(etxtLat.getText().toString());
                 }
 
-                if (etxtLongitude.getText().toString().length() != 0){
-                    longitude = Double.parseDouble(etxtLongitude.getText().toString());
+                if (etxtLong.getText().toString().length() != 0){
+                    longitude = Double.parseDouble(etxtLong.getText().toString());
                 }
 
                 try {
                         endereco = buscarCoordenadas(latitude, longitude);
-                        txtInfo.setText("Rua: " + endereco.getAddressLine(0));
+                        txtResult.setText("Rua: " + endereco.getAddressLine(0));
                     } catch (IOException e) {
                         Log.i("GPS", "Método buscar coordenadas: " + e.getMessage());
                 }
@@ -110,7 +109,7 @@ public class Main2Activity extends AppCompatActivity implements GoogleApiClient.
     public void onConnected(@Nullable Bundle bundle) {
         Log.i("LOG", "onConnected(" + bundle + ")");
 
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             Log.i("LOG", "GPS não permitido!");
 
